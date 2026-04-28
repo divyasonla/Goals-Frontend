@@ -15,7 +15,10 @@ const TeacherDashboard = () => {
   const [weeklyGoals, setWeeklyGoals] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchDate, setSearchDate] = useState("");
+  const [searchWeek, setSearchWeek] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -40,10 +43,28 @@ const TeacherDashboard = () => {
   const uniqueStudents = new Set([...dailyGoals.map(g => g.email), ...weeklyGoals.map(g => g.email)]);
   const completedDaily = dailyGoals.filter(g => g.status === "Completed").length;
 
-  const filterBySearch = (items: any[]) => {
-    if (!search.trim()) return items;
-    const s = search.toLowerCase();
-    return items.filter(item => item.email?.toLowerCase().includes(s) || item.username?.toLowerCase().includes(s));
+  const filterDaily = (items: any[]) => {
+    return items.filter(item => {
+      const matchEmail = !searchEmail || item.email?.toLowerCase().includes(searchEmail.toLowerCase()) || item.username?.toLowerCase().includes(searchEmail.toLowerCase());
+      const matchDate = !searchDate || item.date === searchDate;
+      return matchEmail && matchDate;
+    });
+  };
+
+  const filterWeekly = (items: any[]) => {
+    return items.filter(item => {
+      const matchEmail = !searchEmail || item.email?.toLowerCase().includes(searchEmail.toLowerCase()) || item.username?.toLowerCase().includes(searchEmail.toLowerCase());
+      const matchWeek = !searchWeek || item.week === searchWeek;
+      return matchEmail && matchWeek;
+    });
+  };
+
+  const filterReports = (items: any[]) => {
+    return items.filter(item => {
+      const matchEmail = !searchEmail || item.email?.toLowerCase().includes(searchEmail.toLowerCase()) || item.username?.toLowerCase().includes(searchEmail.toLowerCase());
+      const matchWeek = !searchWeek || item.week === searchWeek;
+      return matchEmail && matchWeek;
+    });
   };
 
   const statusColor = (s: string) => {
@@ -116,8 +137,35 @@ const TeacherDashboard = () => {
           </Card>
         </div>
 
-        {/* Search */}
-        <Input placeholder="Search by student name or email..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-md" />
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <Input
+            placeholder="Search by student name or email..."
+            value={searchEmail}
+            onChange={(e) => setSearchEmail(e.target.value)}
+            className="flex-1"
+          />
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-muted-foreground">Daily Date:</span>
+              <Input
+                type="date"
+                value={searchDate}
+                onChange={(e) => setSearchDate(e.target.value)}
+                className="w-full sm:w-auto"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-muted-foreground">Week:</span>
+              <Input
+                type="week"
+                value={searchWeek}
+                onChange={(e) => setSearchWeek(e.target.value)}
+                className="w-full sm:w-[180px]"
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Tabs */}
         <Tabs defaultValue="daily">
@@ -144,7 +192,7 @@ const TeacherDashboard = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filterBySearch(dailyGoals).sort((a, b) => b.date.localeCompare(a.date)).map((g, i) => (
+                        {filterDaily(dailyGoals).sort((a, b) => b.date.localeCompare(a.date)).map((g, i) => (
                           <TableRow key={i}>
                             <TableCell>
                               <div><p className="font-medium text-sm">{g.username}</p><p className="text-xs text-muted-foreground hidden sm:block">{g.email}</p></div>
@@ -160,7 +208,7 @@ const TeacherDashboard = () => {
                     </Table>
                   </div>
                 </div>
-                {filterBySearch(dailyGoals).length === 0 && <p className="text-center py-8 text-muted-foreground">No daily goals found.</p>}
+                {filterDaily(dailyGoals).length === 0 && <p className="text-center py-8 text-muted-foreground">No daily goals found.</p>}
               </CardContent>
             </Card>
           </TabsContent>
@@ -181,7 +229,7 @@ const TeacherDashboard = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filterBySearch(weeklyGoals).sort((a, b) => b.week.localeCompare(a.week)).map((g, i) => (
+                        {filterWeekly(weeklyGoals).sort((a, b) => b.week.localeCompare(a.week)).map((g, i) => (
                           <TableRow key={i}>
                             <TableCell>
                               <div><p className="font-medium text-sm">{g.username}</p><p className="text-xs text-muted-foreground hidden sm:block">{g.email}</p></div>
@@ -196,17 +244,17 @@ const TeacherDashboard = () => {
                     </Table>
                   </div>
                 </div>
-                {filterBySearch(weeklyGoals).length === 0 && <p className="text-center py-8 text-muted-foreground">No weekly goals found.</p>}
+                {filterWeekly(weeklyGoals).length === 0 && <p className="text-center py-8 text-muted-foreground">No weekly goals found.</p>}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="reports">
             <div className="space-y-4">
-              {filterBySearch(reports).length === 0 ? (
+              {filterReports(reports).length === 0 ? (
                 <Card><CardContent className="py-8 text-center text-muted-foreground">No AI reports found.</CardContent></Card>
               ) : (
-                filterBySearch(reports).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map((r, i) => (
+                filterReports(reports).sort((a, b) => b.createdAt?.localeCompare(a.createdAt) || 0).map((r, i) => (
                   <Card key={i}>
                     <CardHeader>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -214,11 +262,10 @@ const TeacherDashboard = () => {
                           <CardTitle className="text-lg">{r.username} — Week {r.week}</CardTitle>
                           <p className="text-sm text-muted-foreground">{r.email}</p>
                         </div>
-                        <div className={`text-sm font-semibold px-3 py-1 rounded-full w-fit ${
-                          r.completionPercent >= 80 ? "bg-green-100 text-green-700" :
-                          r.completionPercent >= 50 ? "bg-yellow-100 text-yellow-700" :
-                          "bg-red-100 text-red-700"
-                        }`}>
+                        <div className={`text-sm font-semibold px-3 py-1 rounded-full w-fit ${r.completionPercent >= 80 ? "bg-green-100 text-green-700" :
+                            r.completionPercent >= 50 ? "bg-yellow-100 text-yellow-700" :
+                              "bg-red-100 text-red-700"
+                          }`}>
                           {r.completionPercent}%
                         </div>
                       </div>

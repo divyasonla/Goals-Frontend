@@ -12,6 +12,7 @@ import StudentWeeklyPage from "./pages/StudentWeeklyPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import NotFound from "./pages/NotFound";
+import DashboardPage from "./pages/DashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
             <Route path="/student" element={<ProtectedRoute allowedRole="student"><StudentDailyPage /></ProtectedRoute>} />
             <Route path="/student/weekly" element={<ProtectedRoute allowedRole="student"><StudentWeeklyPage /></ProtectedRoute>} />
             <Route path="/student/reports" element={<ProtectedRoute allowedRole="student"><StudentReportsPage /></ProtectedRoute>} />
