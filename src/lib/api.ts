@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:5000/api/auth";
+const BACKEND_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 async function callBackend(endpoint: string, body: Record<string, unknown>) {
   const res = await fetch(`${BACKEND_URL}/${endpoint}`, {
