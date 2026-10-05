@@ -28,7 +28,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const data = await login(email, password);
-      setUser(data.user);
+      setUser(data.user, data.token);
       navigate("/dashboard"); // Navigate to a unified dashboard page
     } catch (err: any) {
       toast({ title: "Login Failed", description: err.message, variant: "destructive" });

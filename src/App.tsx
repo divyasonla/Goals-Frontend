@@ -10,6 +10,9 @@ import SignupPage from "./pages/SignupPage";
 import StudentDailyPage from "./pages/StudentDailyPage";
 import StudentWeeklyPage from "./pages/StudentWeeklyPage";
 import StudentReportsPage from "./pages/StudentReportsPage";
+import StudentSettingsPage from "./pages/StudentSettingsPage";
+import StudentGrowthPage from "./pages/StudentGrowthPage";
+import StudentMentorPage from "./pages/StudentMentorPage";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import NotFound from "./pages/NotFound";
 import DashboardPage from "./pages/DashboardPage";
@@ -31,6 +34,9 @@ const App = () => (
             <Route path="/student" element={<ProtectedRoute allowedRole="student"><StudentDailyPage /></ProtectedRoute>} />
             <Route path="/student/weekly" element={<ProtectedRoute allowedRole="student"><StudentWeeklyPage /></ProtectedRoute>} />
             <Route path="/student/reports" element={<ProtectedRoute allowedRole="student"><StudentReportsPage /></ProtectedRoute>} />
+            <Route path="/student/settings" element={<ProtectedRoute allowedRole="student"><StudentSettingsPage /></ProtectedRoute>} />
+            <Route path="/student/growth" element={<ProtectedRoute allowedRole="student"><StudentGrowthPage /></ProtectedRoute>} />
+            <Route path="/student/mentor" element={<ProtectedRoute allowedRole="student"><StudentMentorPage /></ProtectedRoute>} />
             <Route path="/teacher" element={<ProtectedRoute allowedRole="teacher"><TeacherDashboard /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Target, LogOut, LayoutDashboard, Calendar, BarChart3, Menu } from "lucide-react";
+import { Target, LogOut, LayoutDashboard, Calendar, BarChart3, Menu, Settings, TrendingUp, Sparkles } from "lucide-react";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, logout } = useAuth();
@@ -24,6 +24,9 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     { path: "/student", label: "Daily Goals", icon: Calendar },
     { path: "/student/weekly", label: "Weekly Goals", icon: LayoutDashboard },
     { path: "/student/reports", label: "AI Reports", icon: BarChart3 },
+    { path: "/student/growth", label: "My Growth", icon: TrendingUp },
+    { path: "/student/mentor", label: "AI Mentor", icon: Sparkles },
+    { path: "/student/settings", label: "Settings / Profile", icon: Settings },
   ];
 
   const teacherLinks = [

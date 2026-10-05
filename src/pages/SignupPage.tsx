@@ -33,7 +33,7 @@ const SignupPage = () => {
     setLoading(true);
     try {
       const data = await signup(username, email, password, role);
-      setUser(data.user);
+      setUser(data.user, data.token);
       navigate(data.user.role === "teacher" ? "/teacher" : "/student");
     } catch (err: any) {
       toast({ title: "Signup Failed", description: err.message, variant: "destructive" });
@@ -74,9 +74,9 @@ const SignupPage = () => {
                 <SelectTrigger><SelectValue placeholder="Select your role" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="student">Student</SelectItem>
-                  <SelectItem value="teacher">Teacher</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">Teacher/Admin accounts are provisioned by an administrator.</p>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
