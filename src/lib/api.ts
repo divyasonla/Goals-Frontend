@@ -1,4 +1,5 @@
-const BACKEND_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
+const rawApiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001").replace(/\/+$/, "");
+const BACKEND_URL = `${rawApiUrl}/api/auth`;
 
 async function callBackend(endpoint: string, body: Record<string, unknown>, authenticated = false) {
   const token = authenticated ? sessionStorage.getItem("goal_tracker_token") : null;
