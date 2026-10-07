@@ -14,7 +14,15 @@ async function callBackend(endpoint: string, body: Record<string, unknown>, auth
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
-    throw new Error(errorData.error || `Request failed with status ${res.status}`);
+    const errorMessage =
+      errorData.error ||
+      errorData.message ||
+      (errorData.details ? `${errorData.error || "Error"}: ${errorData.details}` : null) ||
+      `Request failed with status ${res.status}`;
+    const error = new Error(errorMessage);
+    (error as any).code = errorData.code;
+    (error as any).status = res.status;
+    throw error;
   }
 
   return res.json();
@@ -24,8 +32,8 @@ async function callBackend(endpoint: string, body: Record<string, unknown>, auth
 export const login = (email: string, password: string) =>
   callBackend("login", { email, password });
 
-export const signup = (username: string, email: string, password: string, role: string) =>
-  callBackend("signup", { name: username, email, password, role });
+export const signup = (username: string, email: string, password: string, role: string, confirmPassword?: string) =>
+  callBackend("signup", { name: username, email, password, role, confirmPassword });
 
 // Forgot Password
 export const forgotPassword = (email: string) =>
@@ -103,7 +111,17 @@ async function callAuthenticatedApi(path: string, method = "POST", body?: Record
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
   const data = await response.json().catch(() => ({ error: "Unknown error" }));
-  if (!response.ok) throw new Error(data.error || `Request failed with status ${response.status}`);
+  if (!response.ok) {
+    const errorMessage =
+      data.error ||
+      data.message ||
+      (data.details ? `${data.error || "Error"}: ${data.details}` : null) ||
+      `Request failed with status ${response.status}`;
+    const error = new Error(errorMessage);
+    (error as any).code = data.code;
+    (error as any).status = response.status;
+    throw error;
+  }
   return data;
 }
 
